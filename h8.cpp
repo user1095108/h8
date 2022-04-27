@@ -6,7 +6,7 @@ using namespace h8::literals;
 
 int main()
 {
-  enum
+  enum : h8::hash_t
   {
     AAA = "AAA"_h8,
     BB = "BB"_h8,
