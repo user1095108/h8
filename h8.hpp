@@ -23,9 +23,9 @@ constexpr auto to_array(std::unsigned_integral auto const h) noexcept
     }(std::make_index_sequence<sizeof(h)>());
 }
 
-constexpr std::string to_string(std::unsigned_integral auto const h)
+constexpr auto to_string(std::unsigned_integral auto const h)
 {
-  return {to_array(h).data()};
+  return std::string(to_array(h).data());
 }
 
 template <std::unsigned_integral T = hash_t>
