@@ -4,8 +4,8 @@
 
 #include <climits>
 #include <cstdint>
-
 #include <array>
+#include <concepts> // std::unsigned_integral
 #include <string>
 #include <utility> // std::index_sequence
 
@@ -14,7 +14,7 @@ namespace h8
 
 using hash_t = std::uintmax_t;
 
-constexpr auto to_array(auto const h) noexcept
+constexpr auto to_array(std::unsigned_integral auto const h) noexcept
 {
   return [&]<auto ...I>(std::index_sequence<I...>) noexcept
     {
@@ -23,9 +23,12 @@ constexpr auto to_array(auto const h) noexcept
     }(std::make_index_sequence<sizeof(h)>());
 }
 
-constexpr std::string to_string(auto const h) { return {to_array(h).data()}; }
+constexpr std::string to_string(std::unsigned_integral auto const h)
+{
+  return {to_array(h).data()};
+}
 
-template <typename T = hash_t>
+template <std::unsigned_integral T = hash_t>
 constexpr T hash(char const* const s, std::size_t const N) noexcept
 {
   return [&]<auto ...I>(std::index_sequence<I...>) noexcept
