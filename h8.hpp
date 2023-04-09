@@ -14,7 +14,7 @@ namespace h8
 
 using hash_t = std::uintmax_t;
 
-constexpr auto to_array(std::unsigned_integral auto const h) noexcept
+constexpr auto to_array(auto const h) noexcept
 {
   return [&]<auto ...I>(std::index_sequence<I...>) noexcept
     {
@@ -23,7 +23,7 @@ constexpr auto to_array(std::unsigned_integral auto const h) noexcept
     }(std::make_index_sequence<sizeof(h)>());
 }
 
-constexpr auto to_string(std::unsigned_integral auto const h)
+constexpr auto to_string(auto const h)
 {
   return std::string(to_array(h).data());
 }
