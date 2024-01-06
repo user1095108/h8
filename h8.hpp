@@ -12,7 +12,11 @@
 namespace h8
 {
 
+#if defined(__SIZEOF_INT128__)
+using hash_t = unsigned __int128;
+#else
 using hash_t = std::uintmax_t;
+#endif // __SIZEOF_INT128__
 
 constexpr auto to_array(auto const h) noexcept
 {
@@ -28,7 +32,7 @@ constexpr auto to_string(auto const h)
   return std::string(to_array(h).data());
 }
 
-template <std::unsigned_integral T = hash_t>
+template <typename T = hash_t>
 constexpr T hash(char const* const s, std::size_t const N) noexcept
 {
   return [&]<auto ...I>(std::index_sequence<I...>) noexcept
