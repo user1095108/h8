@@ -5,7 +5,6 @@
 #include <climits>
 #include <cstdint>
 #include <array>
-#include <concepts> // std::unsigned_integral
 #include <string>
 #include <utility> // std::index_sequence
 
