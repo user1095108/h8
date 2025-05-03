@@ -11,7 +11,8 @@
 namespace h8
 {
 
-#if defined(__SIZEOF_INT128__) && (__SIZEOF_LONG_LONG__ < __SIZEOF_INT128__)
+#if defined(__SIZEOF_INT128__) && defined(__SIZEOF_LONG_LONG__) &&\
+  (__SIZEOF_INT128__ > __SIZEOF_LONG_LONG__)
 using hash_t = unsigned __int128;
 #else
 using hash_t = std::uintmax_t;
