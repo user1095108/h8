@@ -52,7 +52,7 @@ constexpr auto hash(std::string_view const& s) noexcept
 namespace literals
 {
 
-constexpr auto operator"" _h8(char const* const s,
+constexpr auto operator""_h8(char const* const s,
   std::size_t const N) noexcept
 {
   return hash(s, N);
