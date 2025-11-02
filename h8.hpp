@@ -30,11 +30,11 @@ constexpr auto to_array(auto const h) noexcept
 constexpr std::string to_string(auto const h) { return to_array(h).data(); }
 
 template <typename T = hash_t>
-constexpr T hash(char const* s, std::size_t const N) noexcept
+constexpr T hash(char const* const s, std::size_t const N) noexcept
 {
   return [&]<auto ...I>(std::index_sequence<I...>) noexcept
     {
-      return ((hash_t(I < N ? *s++ : 0) << I * CHAR_BIT) | ...);
+      return ((hash_t(I < N ? s[I] : 0) << I * CHAR_BIT) | ...);
     }(std::make_index_sequence<sizeof(T)>());
 }
 
