@@ -34,14 +34,14 @@ template <typename T>
 std::string to_string(T const h) { return to_array(h).data(); }
 
 template <typename T = hash_t, std::size_t... I>
-constexpr T hash_impl(const char* const s, std::size_t const N,
+constexpr T hash_impl(char const* const s, std::size_t const N,
   std::index_sequence<I...>) noexcept
 {
   return ((T(I < N ? (unsigned char)(s[I]) : 0) << I * CHAR_BIT) | ...);
 }
 
 template <typename T = hash_t>
-constexpr T hash(const char* const s, std::size_t const N) noexcept
+constexpr T hash(char const* const s, std::size_t const N) noexcept
 {
   return hash_impl<T>(s, N, std::make_index_sequence<sizeof(T)>{});
 }
