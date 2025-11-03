@@ -1,5 +1,5 @@
 # h8
-h8 is a nice, reversible, string "hash" for c++20. It can be used to convert enums to strings and back.
+h8 is a nice, reversible, string "hash" for c++17. It can be used to convert enums to strings and back.
 # usage
 ```c++
 #include <iostream>
