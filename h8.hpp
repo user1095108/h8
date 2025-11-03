@@ -41,7 +41,7 @@ constexpr T hash_impl(const char* const s, std::size_t const N,
 }
 
 template <typename T = hash_t>
-constexpr T hash(const char* s, std::size_t N) noexcept
+constexpr T hash(const char* const s, std::size_t const N) noexcept
 {
   return hash_impl<T>(s, N, std::make_index_sequence<sizeof(T)>{});
 }
