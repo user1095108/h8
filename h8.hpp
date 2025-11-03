@@ -21,8 +21,7 @@ using hash_t = std::uintmax_t;
 template <typename T, std::size_t ...I>
 constexpr auto to_array_impl(T const h, std::index_sequence<I...>) noexcept
 {
-  return std::array<char const, sizeof(T) + 1>{
-    char(h >> (I * CHAR_BIT))..., {}};
+  return std::array<char const, sizeof(T) + 1>{char(h >> I * CHAR_BIT)..., 0};
 }
 
 template <typename T>
