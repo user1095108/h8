@@ -2,7 +2,7 @@
 # define H8_HPP
 # pragma once
 
-#include <climits>
+#include <climits> // CHAR_BIT
 #include <cstdint>
 #include <array>
 #include <string>
@@ -18,24 +18,33 @@ using hash_t = unsigned __int128;
 using hash_t = std::uintmax_t;
 #endif // __SIZEOF_INT128__
 
-constexpr auto to_array(auto const h) noexcept
+template <typename T, std::size_t ...I>
+constexpr auto to_array_impl(T const h, std::index_sequence<I...>) noexcept
 {
-  return [&]<auto ...I>(std::index_sequence<I...>) noexcept
-    {
-      return std::array<char const, sizeof(h) + 1>{
-        char(h >> I * CHAR_BIT)...};
-    }(std::make_index_sequence<sizeof(h)>());
+  return std::array<char const, sizeof(T) + 1>{
+    char(h >> (I * CHAR_BIT))..., {}};
 }
 
-constexpr std::string to_string(auto const h) { return to_array(h).data(); }
+template <typename T>
+constexpr auto to_array(T const h) noexcept
+{
+  return to_array_impl(h, std::make_index_sequence<sizeof(T)>{});
+}
+
+template <typename T>
+std::string to_string(T const h) { return to_array(h).data(); }
+
+template <typename T = hash_t, std::size_t... I>
+constexpr T hash_impl(const char* const s, std::size_t const N,
+  std::index_sequence<I...>) noexcept
+{
+  return ((T(I < N ? (unsigned char)(s[I]) : 0) << I * CHAR_BIT) | ...);
+}
 
 template <typename T = hash_t>
-constexpr T hash(char const* const s, std::size_t const N) noexcept
+constexpr T hash(const char* s, std::size_t N) noexcept
 {
-  return [&]<auto ...I>(std::index_sequence<I...>) noexcept
-    {
-      return ((hash_t(I < N ? s[I] : 0) << I * CHAR_BIT) | ...);
-    }(std::make_index_sequence<sizeof(T)>());
+  return hash_impl<T>(s, N, std::make_index_sequence<sizeof(T)>{});
 }
 
 template <typename T = hash_t, std::size_t N>
