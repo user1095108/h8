@@ -33,7 +33,7 @@ constexpr auto to_array(T const h) noexcept
 template <typename T>
 std::string to_string(T const h) { return to_array(h).data(); }
 
-template <typename T = hash_t, std::size_t... I>
+template <typename T = hash_t, std::size_t ...I>
 constexpr T hash_impl(char const* const s, std::size_t const N,
   std::index_sequence<I...>) noexcept
 {
