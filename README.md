@@ -1,7 +1,56 @@
 # h8
-h8 is a nice, reversible, string "hash" for c++17. It can be used to convert enums to strings and back.
-# usage
-```c++
+
+A header-only C++17 library for packing short strings into integers.
+
+## How It Works
+
+`h8` packs up to `sizeof(hash_t)` characters of a string into an integer by placing each byte at a successive bit offset (`char[i]` → bits `i*CHAR_BIT`). The result is a lossless encoding for strings short enough to fit, and a cheap, consistent hash for longer ones.
+
+On platforms with `__int128` support (GCC/Clang on 64-bit), `hash_t` is `unsigned __int128` (16 bytes / 16 characters). Otherwise it falls back to `std::uintmax_t` (typically 8 bytes / 8 characters).
+
+## Requirements
+
+- C++17 or later
+- A compiler supporting `__int128` for full 16-character capacity (GCC, Clang); MSVC falls back to 64-bit
+
+## Usage
+### Hash a string
+```cpp
+constexpr auto h = h8::hash("hello");        // from string literal
+constexpr auto h = h8::hash(sv);             // from std::string_view
+h8::hash(ptr, len);                          // from pointer + length
+```
+
+### User-defined literal
+```cpp
+using namespace h8::literals;
+
+constexpr auto h = "hello"_h8;
+```
+
+### Switch on a string
+```cpp
+using namespace h8::literals;
+
+void dispatch(std::string_view s) {
+    switch (h8::hash(s)) {
+        case "get"_h8:    /* ... */ break;
+        case "post"_h8:   /* ... */ break;
+        case "delete"_h8: /* ... */ break;
+        default:          /* ... */ break;
+    }
+}
+```
+
+### Round-trip back to a string
+```cpp
+constexpr auto h   = h8::hash("hi");
+auto           arr = h8::to_array(h);   // std::array
+std::string    s   = h8::to_string(h);  // std::string
+```
+
+### Converting enums to strings
+```cpp
 #include <iostream>
 
 #include "h8.hpp"
@@ -23,3 +72,20 @@ int main()
   return 0;
 }
 ```
+## API Reference
+
+| Symbol | Description |
+|---|---|
+| `h8::hash_t` | Underlying integer type (`unsigned __int128` or `std::uintmax_t`) |
+| `h8::hash(literal)` | `constexpr` hash of a string literal |
+| `h8::hash(string_view)` | `constexpr` hash of a `std::string_view` |
+| `h8::hash(ptr, len)` | `constexpr` hash from a pointer and length |
+| `h8::to_array(h)` | Unpack a hash to a null-terminated `std::array<char const, N+1>` |
+| `h8::to_string(h)` | Unpack a hash to a `std::string` |
+| `"..."_h8` | User-defined literal (requires `using namespace h8::literals`) |
+
+## Caveats
+
+- Strings longer than `sizeof(hash_t)` are **truncated** — only the first N characters are encoded. Collisions are possible for longer strings.
+- Byte order is little-endian by construction (byte `i` occupies bits `i*CHAR_BIT`), regardless of the host platform.
+- `to_string` / `to_array` only recover the original string if it was short enough to fit losslessly.
