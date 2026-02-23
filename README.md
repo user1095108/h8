@@ -43,34 +43,24 @@ void dispatch(std::string_view s) {
 ```
 
 ### Round-trip back to a string
-```cpp
+```c++
 constexpr auto h   = h8::hash("hi");
 auto           arr = h8::to_array(h);   // std::array
 std::string    s   = h8::to_string(h);  // std::string
 ```
 
 ### Converting enums to strings
-```cpp
-#include <iostream>
-
-#include "h8.hpp"
-
+```c++
 using namespace h8::literals;
 
-int main()
+enum : h8::hash_t
 {
-  enum : h8::hash_t
-  {
     AAA = "AAA"_h8,
     BB = "BB"_h8,
-  };
+};
 
-  std::cout << h8::to_string(AAA) << std::endl;
-  std::cout << h8::to_string(BB) << std::endl;
-
-  //
-  return 0;
-}
+std::cout << h8::to_string(AAA) << std::endl;
+std::cout << h8::to_string(BB) << std::endl;
 ```
 ## API Reference
 
