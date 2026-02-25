@@ -55,12 +55,12 @@ std::cout << h8::to_string(BB) << std::endl;
 | `h8::hash(literal)` | `constexpr` hash of a string literal |
 | `h8::hash(string_view)` | `constexpr` hash of a `std::string_view` |
 | `h8::hash(ptr, len)` | `constexpr` hash from a pointer and length |
-| `h8::to_array(h)` | Unpack a hash to a null-terminated `std::array<char const, N+1>` |
+| `h8::to_array(h)` | Unpack a hash to a null-terminated `std::array<char const, sizeof(h)+1>` |
 | `h8::to_string(h)` | Unpack a hash to a `std::string` |
 | `"..."_h8` | User-defined literal (requires `using namespace h8::literals`) |
 
 ## Limitations
 
 - `h8` is inappropriate for general-purpose hashing.
-- Strings longer than `sizeof(hash_t)` are **truncated** — only the first N characters are encoded. Collisions are possible for longer strings.
+- Strings longer than `sizeof(hash_t)` are **truncated** — only the first `sizeof(hash_t)` characters are encoded. Collisions are possible for longer strings.
 - `to_string()` / `to_array()` only recover the original string if it was short enough to fit losslessly; otherwise, a **truncated** string is recovered.
