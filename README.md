@@ -76,5 +76,5 @@ std::cout << h8::to_string(BB) << std::endl;
 ## Limitations
 
 - Strings longer than `sizeof(hash_t)` are **truncated** — only the first N characters are encoded. Collisions are possible for longer strings.
+- `to_string()` / `to_array()` only recover the original string if it was short enough to fit losslessly. Otherwise, a **truncated** string is recovered.
 - Byte order is little-endian by construction (byte `i` occupies `CHAR_BIT` bits from `i*CHAR_BIT`), regardless of the host platform.
-- `to_string()` / `to_array()` only recover the original string if it was short enough to fit losslessly.
