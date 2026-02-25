@@ -10,8 +10,7 @@ On platforms with `__int128` support (GCC/Clang on 64-bit), `hash_t` is `unsigne
 
 ## Requirements
 
-- C++17 or later
-- A compiler supporting `__int128` for full 16-character capacity (GCC, Clang); MSVC falls back to 64-bit
+- C++17 compiler
 
 ## Usage
 ### Hash a string
@@ -74,8 +73,8 @@ std::cout << h8::to_string(BB) << std::endl;
 | `h8::to_string(h)` | Unpack a hash to a `std::string` |
 | `"..."_h8` | User-defined literal (requires `using namespace h8::literals`) |
 
-## Caveats
+## Limitations
 
 - Strings longer than `sizeof(hash_t)` are **truncated** — only the first N characters are encoded. Collisions are possible for longer strings.
 - Byte order is little-endian by construction (byte `i` occupies `CHAR_BIT` bits from `i*CHAR_BIT`), regardless of the host platform.
-- `to_string` / `to_array` only recover the original string if it was short enough to fit losslessly.
+- `to_string()` / `to_array()` only recover the original string if it was short enough to fit losslessly.
