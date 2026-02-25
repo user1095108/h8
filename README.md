@@ -1,12 +1,12 @@
 # h8
 
-A header-only C++17 library for packing short strings into integers, used for converting enums to strings and back.
+A header-only C++17 library for packing short strings into integers. It can be used for converting enums to strings and back.
 
 ## How It Works
 
-`h8` packs up to `sizeof(hash_t)` characters of a string into an integer by placing each byte at a successive bit offset (`char[i]` → bits `i*CHAR_BIT`). The result is a lossless encoding for strings short enough to fit, and a cheap, consistent hash for longer ones.
+`h8` packs up to `sizeof(hash_t)` characters of a string into an integer by placing each byte at a successive bit offset (`char[i]` → bits `i*CHAR_BIT`). The result is a lossless encoding for strings short enough to fit, and a cheap "hash" for longer ones.
 
-On platforms with `__int128` support (GCC/Clang on 64-bit), `hash_t` is `unsigned __int128` (16 bytes / 16 characters). Otherwise it falls back to `std::uintmax_t` (typically 8 bytes / 8 characters).
+On platforms with `__int128` support, `hash_t` is `unsigned __int128` (16 bytes / 16 characters). Otherwise it falls back to `std::uintmax_t` (typically 8 bytes / 8 characters).
 
 ## Requirements
 
@@ -14,31 +14,17 @@ On platforms with `__int128` support (GCC/Clang on 64-bit), `hash_t` is `unsigne
 
 ## Usage
 ### Hash a string
-```cpp
+```c++
 constexpr auto h = h8::hash("hello");        // from string literal
 constexpr auto h = h8::hash(sv);             // from std::string_view
 h8::hash(ptr, len);                          // from pointer + length
 ```
 
 ### User-defined literal
-```cpp
+```c++
 using namespace h8::literals;
 
 constexpr auto h = "hello"_h8;
-```
-
-### Switch on a string
-```cpp
-using namespace h8::literals;
-
-void dispatch(std::string_view s) {
-    switch (h8::hash(s)) {
-        case "get"_h8:    /* ... */ break;
-        case "post"_h8:   /* ... */ break;
-        case "delete"_h8: /* ... */ break;
-        default:          /* ... */ break;
-    }
-}
 ```
 
 ### Round-trip back to a string
@@ -75,6 +61,6 @@ std::cout << h8::to_string(BB) << std::endl;
 
 ## Limitations
 
+- This implementation is inappropriate for general-purpose hashing.
 - Strings longer than `sizeof(hash_t)` are **truncated** — only the first N characters are encoded. Collisions are possible for longer strings.
-- `to_string()` / `to_array()` only recover the original string if it was short enough to fit losslessly. Otherwise, a **truncated** string is recovered.
-- Byte order is little-endian by construction (byte `i` occupies `CHAR_BIT` bits from `i*CHAR_BIT`), regardless of the host platform.
+- `to_string()` / `to_array()` only recover the original string if it was short enough to fit losslessly; otherwise, a **truncated** string is recovered.
