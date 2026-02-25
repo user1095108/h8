@@ -61,6 +61,6 @@ std::cout << h8::to_string(BB) << std::endl;
 
 ## Limitations
 
-- This implementation is inappropriate for general-purpose hashing.
+- `h8` is inappropriate for general-purpose hashing.
 - Strings longer than `sizeof(hash_t)` are **truncated** — only the first N characters are encoded. Collisions are possible for longer strings.
 - `to_string()` / `to_array()` only recover the original string if it was short enough to fit losslessly; otherwise, a **truncated** string is recovered.
