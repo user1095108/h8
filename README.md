@@ -1,6 +1,6 @@
 # h8
 
-A header-only C++17 library for packing short strings into integers. It can be used for converting enums to strings and back.
+A header-only C++17 library for packing short strings into integers. It can be used for converting **enums to strings and back**.
 
 ## How It Works
 
