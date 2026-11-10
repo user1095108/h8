@@ -38,7 +38,7 @@ constexpr std::string to_string(T const h)
 }
 
 template <typename T> requires(!std::is_same_v<T, bool>)
-constexpr std::string_view to_string_view(T const& h) noexcept
+std::string_view to_string_view(T const& h) noexcept
 {
   return std::string_view(reinterpret_cast<char const*>(&h), sizeof(T));
 }
