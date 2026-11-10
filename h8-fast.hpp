@@ -7,6 +7,7 @@
 #include <cstdint> // std::uintmax_t
 #include <array>
 #include <string>
+#include <string_view>
 #include <type_traits>
 #include <utility> // std::index_sequence<>
 
