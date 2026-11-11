@@ -27,7 +27,7 @@ constexpr auto to_array(T const h) noexcept
   return []<auto ...I>(auto const& in, std::index_sequence<I...>) noexcept
   {
     return std::array<char const, sizeof(T) + 1>{in[I]..., '\0'};
-  }(std::bit_cast<std::array<char, sizeof(T)>>(h),
+  }(std::bit_cast<std::array<char const, sizeof(T)>>(h),
     std::make_index_sequence<sizeof(T)>{});
 }
 
@@ -49,7 +49,7 @@ constexpr T hash(char const* const s, std::size_t const N) noexcept
   return [&]<auto ...I>(std::index_sequence<I...>)
     {
       return std::bit_cast<T>(
-          std::array<char, sizeof(T)>{(I < N ? s[I] : '\0')...}
+          std::array<char const, sizeof(T)>{(I < N ? s[I] : '\0')...}
         );
     }(std::make_index_sequence<sizeof(T)>{});
 }

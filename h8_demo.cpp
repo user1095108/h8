@@ -1,6 +1,5 @@
 #include "h8-fast.hpp"
 
-#include <cassert>
 #include <iostream>
 #include <string>
 #include <string_view>
@@ -17,55 +16,37 @@ constexpr auto cmd_quit  = "quit"_h8;
 // returns false when the user asked to quit
 bool dispatch(std::string_view const cmd)
 {
-    switch (hash(cmd.data(), cmd.size()))
-    {
+  switch (hash(cmd.data(), cmd.size()))
+  {
     case cmd_greet:
-        std::cout << "Hello, world!\n";
-        return true;
+      std::cout << "Hello, world!\n";
+      return true;
     case cmd_help:
-        std::cout << "commands: greet | help | quit\n";
-        return true;
+      std::cout << "commands: greet | help | quit\n";
+      return true;
     case cmd_quit:
-        std::cout << "Goodbye!\n";
-        return false;
+      std::cout << "Goodbye!\n";
+      return false;
     default:
-        std::cout << "unknown command: " << cmd << '\n'
-                  << "try 'help'\n";
-        return true;
-    }
-}
-
-// ---- debugging helper: printable hex of any hash ----
-std::string to_hex(hash_t const h)
-{
-    auto const bytes = to_array(h);   // sizeof(h) bytes + '\0'
-    std::string out;
-    out.reserve(2 * sizeof(h));
-    for (std::size_t i = 0; i < sizeof(h); ++i)
-    {
-        auto const b = static_cast<unsigned char>(bytes[i]);
-        out += "0123456789abcdef"[b >> 4];
-        out += "0123456789abcdef"[b & 0xF];
-    }
-    return out;
+      std::cout << "unknown command: " << cmd << '\n'
+                << "try 'help'\n";
+      return true;
+  }
 }
 
 int main()
 {
-    std::cout << "h8 demo — type 'help' for commands, 'quit' to exit\n";
-    for (std::string line; std::cout << "> " && std::getline(std::cin, line); )
-    {
-        if (line.empty())
-            continue;
+  std::cout << "h8 demo — type 'help' for commands, 'quit' to exit\n";
+  for (std::string line; std::cout << "> " && std::getline(std::cin, line); )
+  {
+    if (line.empty())
+      continue;
 
-        // strip a trailing CR so Windows-style input works too
-        if (line.back() == '\r')
-            line.pop_back();
+    // strip a trailing CR so Windows-style input works too
+    if (line.back() == '\r')
+      line.pop_back();
 
-        if (!dispatch(line))
-            break;
-    }
-
-    std::cout << "\ncmd_greet as hex  : " << to_hex(cmd_greet) << '\n';
-    std::cout << "cmd_greet as text : \"" << to_string(cmd_greet) << "\"\n";
+    if (!dispatch(line))
+      break;
+  }
 }
