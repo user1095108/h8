@@ -7,13 +7,10 @@
 using namespace h8;
 using namespace h8::literals;
 
-// ---- compile-time command identifiers ----
 constexpr auto cmd_greet = "greet"_h8;
 constexpr auto cmd_help  = "help"_h8;
 constexpr auto cmd_quit  = "quit"_h8;
 
-// ---- O(1) runtime dispatch ----
-// returns false when the user asked to quit
 bool dispatch(std::string_view const cmd)
 {
   switch (hash(cmd.data(), cmd.size()))
@@ -42,7 +39,6 @@ int main()
     if (line.empty())
       continue;
 
-    // strip a trailing CR so Windows-style input works too
     if (line.back() == '\r')
       line.pop_back();
 
