@@ -1,5 +1,5 @@
-#ifndef H8_HPP
-# define H8_HPP
+#ifndef H8_FAST_HPP
+# define H8_FAST_HPP
 # pragma once
 
 #include <bit>     // std::bit_cast()
@@ -67,4 +67,4 @@ constexpr auto operator""_h8(char const* const s,
 
 }
 
-#endif // H8_HPP
+#endif // H8_FAST_HPP
