@@ -46,7 +46,7 @@ std::string_view to_string_view(T const& h) noexcept
 template <typename T = hash_t> requires(!std::is_same_v<T, bool>)
 constexpr T hash(char const* const s, std::size_t const N) noexcept
 {
-  return [&]<auto ...I>(std::index_sequence<I...>)
+  return [&]<auto ...I>(std::index_sequence<I...>) noexcept
     {
       return std::bit_cast<T>(
           std::array<char const, sizeof(T)>{(I < N ? s[I] : '\0')...}
