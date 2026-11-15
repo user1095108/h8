@@ -7,7 +7,6 @@
 #include <cstdint> // std::uintmax_t
 #include <array>
 #include <string>
-#include <string_view>
 #include <type_traits>
 #include <utility> // std::index_sequence<>
 
@@ -25,7 +24,7 @@ namespace detail
 {
 
 template <typename T> requires(!std::same_as<T, bool>)
-[[nodiscard]] static constexpr T byteswap(T const value) noexcept
+[[nodiscard]] constexpr T byteswap(T const value) noexcept
 {
 #if defined(__cpp_lib_byteswap)   // C++23
   return std::byteswap(value);
