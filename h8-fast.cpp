@@ -13,9 +13,9 @@ int main()
     TEST = "1234567890123456"_h8,
   };
 
-  std::cout << h8::to_string_view(AAA) << std::endl;
-  std::cout << h8::to_string_view(BB) << std::endl;
-  std::cout << h8::to_string_view(TEST) << std::endl;
+  std::cout << h8::to_string(AAA) << std::endl;
+  std::cout << h8::to_string(BB) << std::endl;
+  std::cout << h8::to_string(TEST) << std::endl;
 
   return 0;
 }

@@ -21,9 +21,31 @@ using hash_t = unsigned __int128;
 using hash_t = std::uintmax_t;
 #endif // __SIZEOF_INT128__
 
-template <typename T> requires(!std::is_same_v<T, bool>)
-constexpr auto to_array(T const h) noexcept
+namespace detail
 {
+
+template <typename T> requires(!std::same_as<T, bool>)
+[[nodiscard]] static constexpr T byteswap(T const value) noexcept
+{
+#if defined(__cpp_lib_byteswap)   // C++23
+  return std::byteswap(value);
+#else                             // C++20
+  return []<auto ...I>(auto&& a, std::index_sequence<I...>) noexcept
+    {
+      return std::bit_cast<T>(std::array<std::byte, sizeof(T)>{
+        a[sizeof(T) - 1 - I]...});
+    }(std::bit_cast<std::array<std::byte, sizeof(T)>>(value),
+      std::make_index_sequence<sizeof(T)>{});
+#endif // __cpp_lib_byteswap
+}
+
+}
+template <typename T> requires(!std::is_same_v<T, bool>)
+constexpr auto to_array(T h) noexcept
+{
+  if constexpr(std::endian::big == std::endian::native)
+    h = detail::byteswap(h);
+
   return []<auto ...I>(auto const& in, std::index_sequence<I...>) noexcept
   {
     return std::array<char const, sizeof(T) + 1>{in[I]..., '\0'};
@@ -37,21 +59,19 @@ constexpr std::string to_string(T const h)
   return std::string(to_array(h).data());
 }
 
-template <typename T> requires(!std::is_same_v<T, bool>)
-std::string_view to_string_view(T const& h) noexcept
-{
-  return std::string_view(reinterpret_cast<char const*>(&h), sizeof(T));
-}
-
 template <typename T = hash_t> requires(!std::is_same_v<T, bool>)
 constexpr T hash(char const* const s, std::size_t const N) noexcept
 {
-  return [&]<auto ...I>(std::index_sequence<I...>) noexcept
+  auto const h([&]<auto ...I>(std::index_sequence<I...>) noexcept
     {
       return std::bit_cast<T>(
           std::array<char const, sizeof(T)>{(I < N ? s[I] : '\0')...}
         );
-    }(std::make_index_sequence<sizeof(T)>{});
+    }(std::make_index_sequence<sizeof(T)>{}));
+
+  if constexpr(std::endian::big == std::endian::native)
+    return detail::byteswap(h);
+  else return h;
 }
 
 namespace literals
