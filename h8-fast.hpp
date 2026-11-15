@@ -41,16 +41,20 @@ template <typename T> requires(!std::same_as<T, bool>)
 
 }
 template <typename T> requires(!std::is_same_v<T, bool>)
-constexpr auto to_array(T h) noexcept
+constexpr auto to_array(T const h) noexcept
 {
   if constexpr(std::endian::big == std::endian::native)
-    h = detail::byteswap(h);
-
-  return []<auto ...I>(auto const& in, std::index_sequence<I...>) noexcept
-  {
-    return std::array<char const, sizeof(T) + 1>{in[I]..., '\0'};
-  }(std::bit_cast<std::array<char const, sizeof(T)>>(h),
-    std::make_index_sequence<sizeof(T)>{});
+    return []<auto ...I>(auto const& in, std::index_sequence<I...>) noexcept
+    {
+      return std::array<char const, sizeof(T) + 1>{in[I]..., '\0'};
+    }(std::bit_cast<std::array<char const, sizeof(T)>>(detail::byteswap(h)),
+      std::make_index_sequence<sizeof(T)>{});
+  else
+    return []<auto ...I>(auto const& in, std::index_sequence<I...>) noexcept
+    {
+      return std::array<char const, sizeof(T) + 1>{in[I]..., '\0'};
+    }(std::bit_cast<std::array<char const, sizeof(T)>>(h),
+      std::make_index_sequence<sizeof(T)>{});
 }
 
 template <typename T> requires(!std::is_same_v<T, bool>)
@@ -62,16 +66,20 @@ constexpr std::string to_string(T const h)
 template <typename T = hash_t> requires(!std::is_same_v<T, bool>)
 constexpr T hash(char const* const s, std::size_t const N) noexcept
 {
-  auto const h([&]<auto ...I>(std::index_sequence<I...>) noexcept
-    {
-      return std::bit_cast<T>(
-          std::array<char const, sizeof(T)>{(I < N ? s[I] : '\0')...}
-        );
-    }(std::make_index_sequence<sizeof(T)>{}));
-
   if constexpr(std::endian::big == std::endian::native)
-    return detail::byteswap(h);
-  else return h;
+    return detail::byteswap([&]<auto ...I>(std::index_sequence<I...>) noexcept
+      {
+        return std::bit_cast<T>(
+            std::array<char const, sizeof(T)>{(I < N ? s[I] : '\0')...}
+          );
+      }(std::make_index_sequence<sizeof(T)>{}));
+  else
+    return [&]<auto ...I>(std::index_sequence<I...>) noexcept
+      {
+        return std::bit_cast<T>(
+            std::array<char const, sizeof(T)>{(I < N ? s[I] : '\0')...}
+          );
+      }(std::make_index_sequence<sizeof(T)>{});
 }
 
 namespace literals
