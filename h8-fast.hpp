@@ -20,6 +20,10 @@ using hash_t = unsigned __int128;
 using hash_t = std::uintmax_t;
 #endif // __SIZEOF_INT128__
 
+static_assert(std::endian::big == std::endian::native ||
+  std::endian::little == std::endian::native,
+  "h8: mixed-endian targets are not supported");
+
 template <typename T> requires(!std::is_same_v<T, bool>)
 constexpr auto to_array(T const h) noexcept
 {
