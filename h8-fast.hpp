@@ -12,7 +12,7 @@
 #include <utility> // std::index_sequence<>
 
 namespace h8
-{ // this is fast, but is c++20 and loses endianess neutrality
+{ // this is fast, but is c++20
 
 #if defined(__SIZEOF_INT128__) && defined(__SIZEOF_LONG_LONG__) &&\
   (__SIZEOF_INT128__ > __SIZEOF_LONG_LONG__)
