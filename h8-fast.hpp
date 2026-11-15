@@ -50,14 +50,14 @@ constexpr T hash(char const* const s, std::size_t const N) noexcept
   return [&]<auto ...I>(std::index_sequence<I...>) noexcept
     {
       if constexpr(std::endian::big == std::endian::native)
-      return std::bit_cast<T>(
-          std::array<char const, sizeof(T)>{
-            (sizeof(T) - I - 1 < N ? s[sizeof(T) - I - 1] : '\0')...}
-        );
+        return std::bit_cast<T>(
+            std::array<char const, sizeof(T)>{
+              (sizeof(T) - I - 1 < N ? s[sizeof(T) - I - 1] : '\0')...}
+          );
       else
-      return std::bit_cast<T>(
-          std::array<char const, sizeof(T)>{(I < N ? s[I] : '\0')...}
-        );
+        return std::bit_cast<T>(
+            std::array<char const, sizeof(T)>{(I < N ? s[I] : '\0')...}
+          );
     }(std::make_index_sequence<sizeof(T)>{});
 }
 
