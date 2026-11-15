@@ -20,41 +20,18 @@ using hash_t = unsigned __int128;
 using hash_t = std::uintmax_t;
 #endif // __SIZEOF_INT128__
 
-namespace detail
-{
-
-template <typename T> requires(!std::same_as<T, bool>)
-[[nodiscard]] constexpr T byteswap(T const value) noexcept
-{
-#if defined(__cpp_lib_byteswap)   // C++23
-  return std::byteswap(value);
-#else                             // C++20
-  return []<auto ...I>(auto&& a, std::index_sequence<I...>) noexcept
-    {
-      return std::bit_cast<T>(std::array<std::byte, sizeof(T)>{
-        a[sizeof(T) - 1 - I]...});
-    }(std::bit_cast<std::array<std::byte, sizeof(T)>>(value),
-      std::make_index_sequence<sizeof(T)>{});
-#endif // __cpp_lib_byteswap
-}
-
-}
-
 template <typename T> requires(!std::is_same_v<T, bool>)
 constexpr auto to_array(T const h) noexcept
 {
-  if constexpr(std::endian::big == std::endian::native)
-    return []<auto ...I>(auto const& in, std::index_sequence<I...>) noexcept
-    {
+  return []<auto ...I>(auto const& in, std::index_sequence<I...>) noexcept
+  {
+    if constexpr(std::endian::big == std::endian::native)
+      return std::array<char const, sizeof(T) + 1>{
+        in[sizeof(T) - I - 1]..., '\0'};
+    else
       return std::array<char const, sizeof(T) + 1>{in[I]..., '\0'};
-    }(std::bit_cast<std::array<char const, sizeof(T)>>(detail::byteswap(h)),
-      std::make_index_sequence<sizeof(T)>{});
-  else
-    return []<auto ...I>(auto const& in, std::index_sequence<I...>) noexcept
-    {
-      return std::array<char const, sizeof(T) + 1>{in[I]..., '\0'};
-    }(std::bit_cast<std::array<char const, sizeof(T)>>(h),
-      std::make_index_sequence<sizeof(T)>{});
+  }(std::bit_cast<std::array<char const, sizeof(T)>>(h),
+    std::make_index_sequence<sizeof(T)>{});
 }
 
 template <typename T> requires(!std::is_same_v<T, bool>)
@@ -66,20 +43,18 @@ constexpr std::string to_string(T const h)
 template <typename T = hash_t> requires(!std::is_same_v<T, bool>)
 constexpr T hash(char const* const s, std::size_t const N) noexcept
 {
-  if constexpr(std::endian::big == std::endian::native)
-    return detail::byteswap([&]<auto ...I>(std::index_sequence<I...>) noexcept
-      {
-        return std::bit_cast<T>(
-            std::array<char const, sizeof(T)>{(I < N ? s[I] : '\0')...}
-          );
-      }(std::make_index_sequence<sizeof(T)>{}));
-  else
-    return [&]<auto ...I>(std::index_sequence<I...>) noexcept
-      {
-        return std::bit_cast<T>(
-            std::array<char const, sizeof(T)>{(I < N ? s[I] : '\0')...}
-          );
-      }(std::make_index_sequence<sizeof(T)>{});
+  return [&]<auto ...I>(std::index_sequence<I...>) noexcept
+    {
+      if constexpr(std::endian::big == std::endian::native)
+      return std::bit_cast<T>(
+          std::array<char const, sizeof(T)>{
+            (sizeof(T) - I - 1 < N ? s[sizeof(T) - I - 1] : '\0')...}
+        );
+      else
+      return std::bit_cast<T>(
+          std::array<char const, sizeof(T)>{(I < N ? s[I] : '\0')...}
+        );
+    }(std::make_index_sequence<sizeof(T)>{});
 }
 
 namespace literals
