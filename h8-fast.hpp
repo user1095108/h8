@@ -40,6 +40,7 @@ template <typename T> requires(!std::same_as<T, bool>)
 }
 
 }
+
 template <typename T> requires(!std::is_same_v<T, bool>)
 constexpr auto to_array(T const h) noexcept
 {
