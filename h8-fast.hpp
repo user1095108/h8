@@ -27,7 +27,7 @@ static_assert(std::endian::big == std::endian::native ||
 template <typename T> requires(!std::is_same_v<T, bool>)
 constexpr auto to_array(T const h) noexcept
 {
-  return []<auto ...I>(auto const& in, std::index_sequence<I...>) noexcept
+  return []<auto ...I>(auto&& in, std::index_sequence<I...>) noexcept
   {
     if constexpr(std::endian::big == std::endian::native)
       return std::array<char const, sizeof(T) + 1>{
